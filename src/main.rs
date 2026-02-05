@@ -1,3 +1,7 @@
+mod cfg;
+mod cli;
+use cli::parser::*;
 fn main() {
-    println!("Hello, Saga!");
+    let cfg = parser();
+    println!("{cfg:?}");
 }
