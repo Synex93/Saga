@@ -5,3 +5,13 @@ edition = "2024"
 
 [dependencies]
 clap = { version = "4.5.57", features = ["derive"] }
+evtx = "0.11.0"
+tokio = { version = "1.49.0", features = ["full"] }
+
+[build-dependencies]
+embed-resource = "3.0.6"
+
+[profile.release]
+lto = true
+codegen-units = 1
+panic = 'abort'
