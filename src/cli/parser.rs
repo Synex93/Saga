@@ -2,15 +2,30 @@ use crate::cfg::sturct::*;
 use clap::Parser;
 
 #[derive(Parser)]
-#[command(version, arg_required_else_help = true)]
+#[command(name = "Saga", about = "Saga - Windows事件日志分析工具")]
+#[command(
+    version,
+    arg_required_else_help = true,
+    disable_help_flag = true,
+    disable_version_flag = true,
+    disable_help_subcommand = true
+)]
 struct Args {
-    /// 日志路径
+    /// 指定日志路径,默认为当前系统日志存放位置
     #[arg(short, long)]
     path: Option<String>,
 
     /// 模块选择
     #[command(subcommand)]
     models: Option<Models>,
+
+    /// 显示帮助信息
+    #[arg(short, long, action = clap::ArgAction::Help)]
+    pub help: Option<bool>,
+
+    /// 显示版本信息
+    #[arg(short = 'V', long, action = clap::ArgAction::Version)]
+    pub version: Option<bool>,
 }
 
 pub fn parser() -> Config {

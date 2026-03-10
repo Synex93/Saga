@@ -1,5 +1,5 @@
 fn main() {
     if std::env::var("CARGO_CFG_WINDOWS").is_ok() {
-        embed_resource::compile("wincmd.rc", &[""]);
+        let _ = embed_resource::compile("wincmd.rc", &[""]);
     }
 }

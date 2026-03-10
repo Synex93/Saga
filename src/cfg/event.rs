@@ -1,23 +1,21 @@
-pub trait EventIdExt {
-    fn get_event_id_ext(&self) -> &'static str;
-}
+pub struct EventId(pub u16);
 
-impl EventIdExt for u16 {
-    fn get_event_id_ext(&self) -> &'static str {
-        match self {
-            //  Authentication
+impl EventId {
+    pub fn description(&self) -> &'static str {
+        match self.0 {
+            // Authentication
             4624 => "账户已成功登录 (用户验证成功)",
             4625 => "账户登录失败 (凭据错误或不存在)",
-            4634 => "账户会话已结束 (注销)",
-            4647 => "用户主动发起注销",
             4648 => "使用显式凭据尝试登录 (Runas/进程切换)",
             4672 => "指派给新登录的特殊特权 (管理员登录)",
-            4720 => "已创建用户账户",
-            4726 => "已删除用户账户",
             4740 => "账户已被锁定 (安全策略锁定)",
             4768 => "Kerberos 身份验证票据 (TGT) 请求",
+            4771 => "Kerberos 预认证失败 (暴力破解检测)",
+            4776 => "NTLM 凭据验证尝试",
 
-            //  Session
+            // Session
+            4634 => "账户会话已结束 (注销)",
+            4647 => "用户主动发起注销",
             21 => "远程会话成功接收 (正在创建会话)",
             22 => "远程桌面服务: Shell程序启动 (登录完成)",
             23 => "用户已彻底退出远程会话",
@@ -26,7 +24,17 @@ impl EventIdExt for u16 {
             40 => "远程会话断开原因代码",
             1149 => "RDP 预验证成功",
 
+            // Account Management
+            4720 => "已创建用户账户",
+            4726 => "已删除用户账户",
+
             _ => "未知或未定义事件 ID",
         }
+    }
+}
+
+impl From<u16> for EventId {
+    fn from(v: u16) -> Self {
+        EventId(v)
     }
 }

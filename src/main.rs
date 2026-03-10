@@ -1,17 +1,20 @@
 mod cfg;
 mod cli;
-mod control;
+mod out;
+mod parser;
 
 use cli::parser::*;
-use control::evtx::run_parser;
+use parser::flow::run_parser;
 use std::time::Instant;
 
-#[tokio::main]
+#[tokio::main(flavor = "multi_thread", worker_threads = 2)]
 async fn main() {
     let cfg = parser();
 
     let start = Instant::now();
+
     run_parser(cfg).await;
+
     let duration = start.elapsed();
 
     println!("总耗时: {:?}", duration);
