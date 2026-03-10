@@ -1,8 +1,7 @@
 use crate::parser::xml::ParserResult;
 use crossterm::{
     event::{self, Event, KeyCode},
-    execute,
-    terminal::{self, ClearType},
+    execute, terminal,
 };
 use ratatui::{
     Terminal,
@@ -156,7 +155,7 @@ pub fn run_tui(data: Vec<ParserResult>, total: usize) -> io::Result<()> {
                     .borders(Borders::ALL)
                     .title(" Saga - 认证事件 "),
             )
-            .highlight_style(Style::default().bg(Color::DarkGray))
+            .row_highlight_style(Style::default().bg(Color::DarkGray))
             .highlight_symbol("► ");
 
             f.render_stateful_widget(table, layout[0], &mut app.state);

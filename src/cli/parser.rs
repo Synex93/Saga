@@ -19,6 +19,10 @@ struct Args {
     #[command(subcommand)]
     models: Option<Models>,
 
+    /// 输出模式
+    #[arg(short, long, value_enum, default_value = "tui")]
+    out: Option<String>,
+
     /// 显示帮助信息
     #[arg(short, long, action = clap::ArgAction::Help)]
     pub help: Option<bool>,
