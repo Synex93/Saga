@@ -67,7 +67,7 @@ pub async fn run_parser(cfg: Config) {
         let _ = handle.await;
     }
 
-    crate::out::print::run(
+    crate::out::export::run(
         collect_handle.await.unwrap_or_default(),
         *total_num.lock().unwrap() as usize,
     );
