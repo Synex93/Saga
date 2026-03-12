@@ -75,7 +75,7 @@ pub async fn run_parser(cfg: Config) {
     );
 }
 
-fn list_evtx(dir: &str) -> Vec<PathBuf> {
+pub fn list_evtx(dir: &str) -> Vec<PathBuf> {
     let ext = "evtx".to_string();
     let mut files = Vec::new();
 
