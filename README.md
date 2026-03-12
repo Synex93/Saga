@@ -1,8 +1,9 @@
-# Saga
+# Saga - Windows 事件日志分析工具
 
-**Windows 事件日志分析工具**
+![Saga](https://socialify.git.ci/Synex93/Saga/image?custom_language=Rust&font=Inter&forks=1&issues=1&language=1&name=1&owner=1&pulls=1&stargazers=1&theme=Light)
 
-## 为什么重构
+
+## 关于重构
 原 Go 版本存在以下问题：
 - 解析速度过于缓慢，未找到合适的替换方案
 - 由于解析缓慢，CLI 方案需要缓存机制，同样未找到合适方案
@@ -33,8 +34,8 @@ Options:
 ```bash
 # 以下写法等价
 Saga.exe Authentication
-Saga.exe authen
-Saga.exe auth
+Saga.exe Authen
+Saga.exe Auth
 ```
 
 ---
