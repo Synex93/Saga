@@ -22,7 +22,31 @@ impl Models {
             // 账户管理
             Models::AccountManagement => ModelRule {
                 files: vec!["Security.evtx"],
-                ids: vec![4720, 4726],
+                ids: vec![4720, 4722, 4723, 4724, 4725, 4726, 4738, 4740, 4767],
+            },
+
+            // 服务管理
+            Models::ServiceControl => ModelRule {
+                files: vec!["System.evtx"],
+                ids: vec![7034, 7035, 7036, 7040, 7045],
+            },
+
+            // 计划任务
+            Models::ScheduledTask => ModelRule {
+                files: vec![
+                    "Security.evtx",
+                    "Microsoft-Windows-TaskScheduler%4Operational.evtx",
+                ],
+                ids: vec![4698, 4699, 4700, 4701, 4702, 106, 140, 141, 200, 201],
+            },
+
+            // PowerShell 执行日志
+            Models::PowerShell => ModelRule {
+                files: vec![
+                    "Microsoft-Windows-PowerShell%4Operational.evtx",
+                    "Windows PowerShell.evtx",
+                ],
+                ids: vec![4103, 4104, 4105, 4106, 400, 403, 600],
             },
         }
     }
