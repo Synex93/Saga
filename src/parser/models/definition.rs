@@ -14,6 +14,18 @@ pub enum ParserResult {
     ScheduledTask(ScheduledTaskDetail),
     PowerShell(PowerShellDetail),
 }
+impl ParserResult {
+    pub fn time(&self) -> &str {
+        match self {
+            ParserResult::Authentication(d) => &d.time,
+            ParserResult::Session(d) => &d.time,
+            ParserResult::AccountManagement(d) => &d.time,
+            ParserResult::ServiceControl(d) => &d.time,
+            ParserResult::ScheduledTask(d) => &d.time,
+            ParserResult::PowerShell(d) => &d.time,
+        }
+    }
+}
 
 pub struct FieldMeta {
     pub title: &'static str,
