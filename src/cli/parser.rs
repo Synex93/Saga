@@ -8,7 +8,8 @@ use clap::Parser;
     arg_required_else_help = true,
     disable_help_flag = true,
     disable_version_flag = true,
-    disable_help_subcommand = true
+    disable_help_subcommand = true,
+    infer_subcommands = true
 )]
 struct Args {
     /// 指定日志路径,默认为当前系统日志存放位置

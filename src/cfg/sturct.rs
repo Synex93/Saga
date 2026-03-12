@@ -12,6 +12,7 @@ pub struct ModelRule {
 }
 
 #[derive(Subcommand, Debug, Clone)]
+#[command(rename_all = "verbatim")]
 pub enum Models {
     /// 验证相关信息, EventID: 4624, 4625, 4648, 4672, 4740, 4768, 4771, 4776
     Authentication,
