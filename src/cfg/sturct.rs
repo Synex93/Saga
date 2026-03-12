@@ -1,9 +1,9 @@
-use clap::Subcommand;
-
+use clap::{Subcommand, ValueEnum};
 #[derive(Debug, Clone)]
 pub struct Config {
     pub path: String,
     pub model: Models,
+    pub format: OutFormat,
 }
 
 pub struct ModelRule {
@@ -19,4 +19,9 @@ pub enum Models {
     Session = 1,
     /// 账户管理, EventID: 4720, 4726
     AccountManagement = 2,
+}
+
+#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
+pub enum OutFormat {
+    Csv,
 }

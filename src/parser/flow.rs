@@ -70,6 +70,7 @@ pub async fn run_parser(cfg: Config) {
     crate::out::export::run(
         collect_handle.await.unwrap_or_default(),
         *total_num.lock().unwrap() as usize,
+        cfg.format,
     );
     println!("总计扫描到的事件记录数: {}", *total_num.lock().unwrap());
 }

@@ -20,9 +20,8 @@ struct Args {
     models: Option<Models>,
 
     /// 输出模式
-    #[arg(short, long, value_enum, default_value = "tui")]
-    out: Option<String>,
-
+    #[arg(short, long, value_enum, default_value_t = OutFormat::Csv)]
+    out: OutFormat,
     /// 显示帮助信息
     #[arg(short, long, action = clap::ArgAction::Help)]
     pub help: Option<bool>,
@@ -37,11 +36,13 @@ pub fn parser() -> Config {
 
     let default_path = String::from("C:\\Windows\\System32\\winevt\\Logs");
     let final_path = args.path.unwrap_or(default_path);
+    let out_fromat = args.out;
 
     match args.models {
         Some(m) => Config {
             path: final_path,
             model: m,
+            format: out_fromat,
         },
         None => {
             eprintln!("模块参数为空，请使用-h查看帮助");
