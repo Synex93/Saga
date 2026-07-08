@@ -7,7 +7,7 @@ use quick_xml::reader::Reader;
 pub struct ScheduledTaskDetail {
     pub time: String,
     pub event_id: u16,
-    pub description: String,
+    pub description: &'static str,
     pub task_name: String,
     pub subject_user_name: String,
     pub action: String,
@@ -91,7 +91,7 @@ pub fn parse_scheduled_task(xml: &str) -> ScheduledTaskDetail {
                 if let Ok(text) = reader.read_text(e.name()) {
                     if let Ok(id) = text.parse::<u16>() {
                         detail.event_id = id;
-                        detail.description = EventId(id).description().to_string();
+                        detail.description = EventId(id).description();
                     }
                 }
             }

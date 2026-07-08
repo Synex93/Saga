@@ -7,7 +7,7 @@ use quick_xml::reader::Reader;
 pub struct AuthenticationDetail {
     pub time: String,
     pub event_id: u16,
-    pub description: String,
+    pub description: &'static str,
     pub subject_user_name: String,
     pub target_user_name: String,
     pub ip_address: String,
@@ -103,7 +103,7 @@ pub fn parse_authentication(xml: &str) -> AuthenticationDetail {
                 if let Ok(text) = reader.read_text(e.name()) {
                     if let Ok(id) = text.parse::<u16>() {
                         detail.event_id = id;
-                        detail.description = EventId(id).description().to_string();
+                        detail.description = EventId(id).description();
                     }
                 }
             }
