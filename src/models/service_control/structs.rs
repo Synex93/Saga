@@ -10,6 +10,7 @@ pub struct ServiceControlDetail {
     pub start_type: String,
     pub image_path: String,
     pub account_name: String,
+    pub raw_data: String,
 }
 
 pub struct ServiceControlMeta {
@@ -21,6 +22,7 @@ pub struct ServiceControlMeta {
     pub start_type: FieldMeta,
     pub image_path: FieldMeta,
     pub account_name: FieldMeta,
+    pub raw_data: FieldMeta,
 }
 
 pub static SERVICE_CONTROL_META: ServiceControlMeta = ServiceControlMeta {
@@ -41,5 +43,8 @@ pub static SERVICE_CONTROL_META: ServiceControlMeta = ServiceControlMeta {
     },
     account_name: FieldMeta {
         title: "运行账户"
+    },
+    raw_data: FieldMeta {
+        title: "详细信息"
     },
 };

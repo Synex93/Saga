@@ -10,6 +10,7 @@ pub struct AuthenticationDetail {
     pub ip_address: String,
     pub logon_type: Option<u32>,
     pub status: String,
+    pub raw_data: String,
 }
 
 pub struct AuthenticationMeta {
@@ -21,6 +22,7 @@ pub struct AuthenticationMeta {
     pub ip_address: FieldMeta,
     pub logon_type: FieldMeta,
     pub status: FieldMeta,
+    pub raw_data: FieldMeta,
 }
 
 // 解析元数据
@@ -39,4 +41,7 @@ pub static AUTH_META: AuthenticationMeta = AuthenticationMeta {
         title: "登录类型"
     },
     status: FieldMeta { title: "状态码" },
+    raw_data: FieldMeta {
+        title: "详细信息"
+    },
 };

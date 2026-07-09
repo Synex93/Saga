@@ -25,6 +25,7 @@ impl EventRecord for AccountManagementDetail {
                 m.target_user_name.title,
                 Cow::Borrowed(&self.target_user_name),
             ),
+            (m.raw_data.title, Cow::Borrowed(&self.raw_data)),
         ]
     }
 }

@@ -7,6 +7,7 @@ pub struct AccountManagementDetail {
     pub description: &'static str,
     pub subject_user_name: String,
     pub target_user_name: String,
+    pub raw_data: String,
 }
 
 pub struct AccountManagementMeta {
@@ -15,6 +16,7 @@ pub struct AccountManagementMeta {
     pub description: FieldMeta,
     pub subject_user_name: FieldMeta,
     pub target_user_name: FieldMeta,
+    pub raw_data: FieldMeta,
 }
 
 pub static ACCOUNT_MANAGEMENT_META: AccountManagementMeta = AccountManagementMeta {
@@ -24,5 +26,8 @@ pub static ACCOUNT_MANAGEMENT_META: AccountManagementMeta = AccountManagementMet
     subject_user_name: FieldMeta { title: "操作者" },
     target_user_name: FieldMeta {
         title: "被操作账户",
+    },
+    raw_data: FieldMeta {
+        title: "详细信息"
     },
 };

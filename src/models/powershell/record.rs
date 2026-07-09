@@ -21,6 +21,7 @@ impl EventRecord for PowerShellDetail {
             (m.script_block.title, Cow::Borrowed(&self.script_block)),
             (m.command_line.title, Cow::Borrowed(&self.command_line)),
             (m.sequence_id.title, Cow::Borrowed(&self.sequence_id)),
+            (m.raw_data.title, Cow::Borrowed(&self.raw_data)),
         ]
     }
 }

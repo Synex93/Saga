@@ -10,6 +10,7 @@ pub struct PowerShellDetail {
     pub script_block: String,
     pub command_line: String,
     pub sequence_id: String,
+    pub raw_data: String,
 }
 
 pub struct PowerShellMeta {
@@ -21,6 +22,7 @@ pub struct PowerShellMeta {
     pub script_block: FieldMeta,
     pub command_line: FieldMeta,
     pub sequence_id: FieldMeta,
+    pub raw_data: FieldMeta,
 }
 
 pub static POWER_SHELL_META: PowerShellMeta = PowerShellMeta {
@@ -35,5 +37,8 @@ pub static POWER_SHELL_META: PowerShellMeta = PowerShellMeta {
     command_line: FieldMeta { title: "命令行" },
     sequence_id: FieldMeta {
         title: "分片序号"
+    },
+    raw_data: FieldMeta {
+        title: "详细信息"
     },
 };

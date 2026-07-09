@@ -31,6 +31,7 @@ impl EventRecord for AuthenticationDetail {
                     .map_or(Cow::Borrowed(""), |v| Cow::Owned(v.to_string())),
             ),
             (m.status.title, Cow::Borrowed(&self.status)),
+            (m.raw_data.title, Cow::Borrowed(&self.raw_data)),
         ]
     }
 }

@@ -8,9 +8,13 @@ pub fn parse(xml: &str) -> Box<dyn EventRecord + Send> {
     let mut reader = Reader::from_str(xml);
     reader.config_mut().trim_text(true);
 
-    let mut detail = AccountManagementDetail::default();
+    let mut detail = AccountManagementDetail {
+        raw_data: String::new(),
+        ..Default::default()
+    };
     let mut buf = Vec::with_capacity(512);
     let mut current_data_name_bytes: &'static [u8] = b"";
+    let mut current_extra_name = String::new();
 
     loop {
         match reader.read_event_into(&mut buf) {
@@ -40,7 +44,12 @@ pub fn parse(xml: &str) -> Box<dyn EventRecord + Send> {
                         current_data_name_bytes = match attr.value.as_ref() {
                             b"SubjectUserName" => b"SubjectUserName",
                             b"TargetUserName" => b"TargetUserName",
-                            _ => b"",
+                            other => {
+                                current_extra_name.clear();
+                                current_extra_name
+                                    .push_str(std::str::from_utf8(other).unwrap_or(""));
+                                b""
+                            }
                         };
                         break;
                     }
@@ -48,7 +57,7 @@ pub fn parse(xml: &str) -> Box<dyn EventRecord + Send> {
             }
 
             Ok(XmlEvent::Text(ref e)) => {
-                if current_data_name_bytes.is_empty() {
+                if current_data_name_bytes.is_empty() && current_extra_name.is_empty() {
                     buf.clear();
                     continue;
                 }
@@ -56,6 +65,7 @@ pub fn parse(xml: &str) -> Box<dyn EventRecord + Send> {
                     let text = cow.as_ref();
                     if text == "-" || text.is_empty() {
                         current_data_name_bytes = b"";
+                        current_extra_name.clear();
                         buf.clear();
                         continue;
                     }
@@ -64,12 +74,23 @@ pub fn parse(xml: &str) -> Box<dyn EventRecord + Send> {
                         b"TargetUserName" => detail.target_user_name = text.to_owned(),
                         _ => {}
                     }
+
+                    if !current_extra_name.is_empty() {
+                        detail.raw_data.push_str(&current_extra_name);
+                        detail.raw_data.push_str(": ");
+                        detail.raw_data.push_str(text);
+                        detail.raw_data.push('\n');
+                    }
                 }
                 current_data_name_bytes = b"";
+                current_extra_name.clear();
             }
 
             Ok(XmlEvent::End(ref e)) => match e.name().as_ref() {
-                b"Data" => current_data_name_bytes = b"",
+                b"Data" => {
+                    current_data_name_bytes = b"";
+                    current_extra_name.clear();
+                }
                 b"Event" => break,
                 _ => {}
             },
@@ -78,6 +99,10 @@ pub fn parse(xml: &str) -> Box<dyn EventRecord + Send> {
             _ => {}
         }
         buf.clear();
+    }
+
+    if detail.raw_data.ends_with('\n') {
+        detail.raw_data.pop();
     }
 
     Box::new(detail)

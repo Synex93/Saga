@@ -9,7 +9,7 @@ clap = { version = "4.5.57", features = ["derive"] }
 crossterm = "0.29.0"
 evtx = "0.11.0"
 quick-xml = "0.39.0"
-rust_xlsxwriter = "0.96.0"
+rust_xlsxwriter = { version = "0.96", features = ["constant_memory"] }
 # ratatui = "0.30.0"
 tokio = { version = "1.49.0", features = ["full"] }
 

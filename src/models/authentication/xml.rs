@@ -8,11 +8,15 @@ pub fn parse(xml: &str) -> Box<dyn EventRecord + Send> {
     let mut reader = Reader::from_str(xml);
     reader.config_mut().trim_text(true);
 
-    let mut detail = AuthenticationDetail::default();
+    let mut detail = AuthenticationDetail {
+        raw_data: String::new(),
+        ..Default::default()
+    };
     let mut buf = Vec::with_capacity(512);
 
     // 用静态字符串标记当前 Data Name，匹配时直接比较 &[u8]
     let mut current_data_name_bytes: &'static [u8] = b"";
+    let mut current_extra_name = String::new();
 
     loop {
         match reader.read_event_into(&mut buf) {
@@ -46,16 +50,17 @@ pub fn parse(xml: &str) -> Box<dyn EventRecord + Send> {
                         // 直接在字节层面匹配，零拷贝
                         current_data_name_bytes = match attr.value.as_ref() {
                             b"SubjectUserName" => b"SubjectUserName",
-                            b"SubjectDomainName" => b"SubjectDomainName",
                             b"TargetUserName" => b"TargetUserName",
-                            b"TargetDomainName" => b"TargetDomainName",
                             b"IpAddress" => b"IpAddress",
-                            b"WorkstationName" => b"WorkstationName",
                             b"LogonType" => b"LogonType",
-                            b"ProcessName" => b"ProcessName",
                             b"Status" => b"Status",
                             b"SubStatus" => b"SubStatus",
-                            _ => b"", // 不关心的字段
+                            other => {
+                                current_extra_name.clear();
+                                current_extra_name
+                                    .push_str(std::str::from_utf8(other).unwrap_or(""));
+                                b""
+                            }
                         };
                         break;
                     }
@@ -64,7 +69,7 @@ pub fn parse(xml: &str) -> Box<dyn EventRecord + Send> {
 
             // ── Text 内容 ──────────────────────────────────────────────
             Ok(XmlEvent::Text(ref e)) => {
-                if current_data_name_bytes.is_empty() {
+                if current_data_name_bytes.is_empty() && current_extra_name.is_empty() {
                     buf.clear();
                     continue;
                 }
@@ -74,6 +79,7 @@ pub fn parse(xml: &str) -> Box<dyn EventRecord + Send> {
 
                     if text == "-" || text.is_empty() {
                         current_data_name_bytes = b"";
+                        current_extra_name.clear();
                         buf.clear();
                         continue;
                     }
@@ -91,13 +97,24 @@ pub fn parse(xml: &str) -> Box<dyn EventRecord + Send> {
                         }
                         _ => {}
                     }
+
+                    if !current_extra_name.is_empty() {
+                        detail.raw_data.push_str(&current_extra_name);
+                        detail.raw_data.push_str(": ");
+                        detail.raw_data.push_str(text);
+                        detail.raw_data.push('\n');
+                    }
                 }
                 current_data_name_bytes = b"";
+                current_extra_name.clear();
             }
 
             // ── End ────────────────────────────────────────────────────
             Ok(XmlEvent::End(ref e)) => match e.name().as_ref() {
-                b"Data" => current_data_name_bytes = b"",
+                b"Data" => {
+                    current_data_name_bytes = b"";
+                    current_extra_name.clear();
+                }
                 b"Event" => break,
                 _ => {}
             },
@@ -106,6 +123,10 @@ pub fn parse(xml: &str) -> Box<dyn EventRecord + Send> {
             _ => {}
         }
         buf.clear();
+    }
+
+    if detail.raw_data.ends_with('\n') {
+        detail.raw_data.pop();
     }
 
     Box::new(detail)

@@ -20,6 +20,7 @@ impl EventRecord for SessionDetail {
             (m.session_id.title, Cow::Borrowed(&self.session_id)),
             (m.remote_host.title, Cow::Borrowed(&self.remote_host)),
             (m.reason.title, Cow::Borrowed(&self.reason)),
+            (m.raw_data.title, Cow::Borrowed(&self.raw_data)),
         ]
     }
 }

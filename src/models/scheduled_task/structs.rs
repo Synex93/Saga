@@ -9,6 +9,7 @@ pub struct ScheduledTaskDetail {
     pub subject_user_name: String,
     pub action: String,
     pub result_code: String,
+    pub raw_data: String,
 }
 
 pub struct ScheduledTaskMeta {
@@ -19,6 +20,7 @@ pub struct ScheduledTaskMeta {
     pub subject_user_name: FieldMeta,
     pub action: FieldMeta,
     pub result_code: FieldMeta,
+    pub raw_data: FieldMeta,
 }
 
 pub static SCHEDULED_TASK_META: ScheduledTaskMeta = ScheduledTaskMeta {
@@ -33,4 +35,7 @@ pub static SCHEDULED_TASK_META: ScheduledTaskMeta = ScheduledTaskMeta {
         title: "执行动作"
     },
     result_code: FieldMeta { title: "结果码" },
+    raw_data: FieldMeta {
+        title: "详细信息"
+    },
 };

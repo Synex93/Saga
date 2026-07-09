@@ -21,6 +21,7 @@ impl EventRecord for ServiceControlDetail {
             (m.start_type.title, Cow::Borrowed(&self.start_type)),
             (m.image_path.title, Cow::Borrowed(&self.image_path)),
             (m.account_name.title, Cow::Borrowed(&self.account_name)),
+            (m.raw_data.title, Cow::Borrowed(&self.raw_data)),
         ]
     }
 }

@@ -23,6 +23,7 @@ impl EventRecord for ScheduledTaskDetail {
             ),
             (m.action.title, Cow::Borrowed(&self.action)),
             (m.result_code.title, Cow::Borrowed(&self.result_code)),
+            (m.raw_data.title, Cow::Borrowed(&self.raw_data)),
         ]
     }
 }

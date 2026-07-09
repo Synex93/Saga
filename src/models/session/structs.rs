@@ -9,6 +9,7 @@ pub struct SessionDetail {
     pub session_id: String,
     pub remote_host: String,
     pub reason: String,
+    pub raw_data: String,
 }
 
 pub struct SessionMeta {
@@ -19,6 +20,7 @@ pub struct SessionMeta {
     pub session_id: FieldMeta,
     pub remote_host: FieldMeta,
     pub reason: FieldMeta,
+    pub raw_data: FieldMeta,
 }
 
 pub static SESSION_META: SessionMeta = SessionMeta {
@@ -31,4 +33,7 @@ pub static SESSION_META: SessionMeta = SessionMeta {
         title: "来源主机"
     },
     reason: FieldMeta { title: "原因码" },
+    raw_data: FieldMeta {
+        title: "详细信息"
+    },
 };
