@@ -31,5 +31,5 @@ pub enum Models {
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
 pub enum OutFormat {
     Csv,
-    // Excel,
+    Excel,
 }

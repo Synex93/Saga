@@ -9,9 +9,9 @@ pub fn run(
     // 数据排序
     data.sort_by(|a, b| b.time().cmp(a.time()));
     match of {
-        OutFormat::Csv => {
-            to_csv(&data);
-        }
+        OutFormat::Csv => to_csv(&data),
+        OutFormat::Excel => crate::out::excel::to_excel(&data),
     }
+
     println!("总计扫描到的事件记录数: {}", total);
 }

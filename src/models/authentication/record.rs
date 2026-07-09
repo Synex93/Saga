@@ -1,5 +1,6 @@
 use super::structs::{AUTH_META, AuthenticationDetail};
 use crate::parser::definition::EventRecord;
+use std::borrow::Cow;
 
 impl EventRecord for AuthenticationDetail {
     fn time(&self) -> &str {
@@ -9,33 +10,27 @@ impl EventRecord for AuthenticationDetail {
     fn type_name(&self) -> &'static str {
         "Authentication"
     }
-
-    fn csv_header(&self) -> String {
+    fn fields(&self) -> Vec<(&'static str, Cow<'_, str>)> {
         let m = &AUTH_META;
-        format!(
-            "{},{},{},{},{},{},{},{}",
-            m.time.title,
-            m.event_id.title,
-            m.description.title,
-            m.subject_user_name.title,
-            m.target_user_name.title,
-            m.ip_address.title,
-            m.logon_type.title,
-            m.status.title
-        )
-    }
-
-    fn to_csv_row(&self) -> String {
-        format!(
-            "{},{},{},{},{},{},{},{}",
-            self.time,
-            self.event_id,
-            self.description,
-            self.subject_user_name,
-            self.target_user_name,
-            self.ip_address,
-            self.logon_type.map_or(String::new(), |v| v.to_string()),
-            self.status,
-        )
+        vec![
+            (m.time.title, Cow::Borrowed(&self.time)),
+            (m.event_id.title, Cow::Owned(self.event_id.to_string())),
+            (m.description.title, Cow::Borrowed(self.description)),
+            (
+                m.subject_user_name.title,
+                Cow::Borrowed(&self.subject_user_name),
+            ),
+            (
+                m.target_user_name.title,
+                Cow::Borrowed(&self.target_user_name),
+            ),
+            (m.ip_address.title, Cow::Borrowed(&self.ip_address)),
+            (
+                m.logon_type.title,
+                self.logon_type
+                    .map_or(Cow::Borrowed(""), |v| Cow::Owned(v.to_string())),
+            ),
+            (m.status.title, Cow::Borrowed(&self.status)),
+        ]
     }
 }

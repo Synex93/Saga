@@ -1,5 +1,6 @@
 use super::structs::{POWER_SHELL_META, PowerShellDetail};
 use crate::parser::definition::EventRecord;
+use std::borrow::Cow;
 
 impl EventRecord for PowerShellDetail {
     fn time(&self) -> &str {
@@ -9,33 +10,17 @@ impl EventRecord for PowerShellDetail {
     fn type_name(&self) -> &'static str {
         "PowerShell"
     }
-    fn csv_header(&self) -> String {
+    fn fields(&self) -> Vec<(&'static str, Cow<'_, str>)> {
         let m = &POWER_SHELL_META;
-        format!(
-            "{},{},{},{},{},{},{},{}",
-            m.time.title,
-            m.event_id.title,
-            m.description.title,
-            m.user_name.title,
-            m.host_name.title,
-            m.script_block.title,
-            m.command_line.title,
-            m.sequence_id.title,
-        )
-    }
-
-    fn to_csv_row(&self) -> String {
-        // script_block 可能含换行和逗号，用双引号包裹
-        format!(
-            "{},{},{},{},{},\"{}\",{},{}",
-            self.time,
-            self.event_id,
-            self.description,
-            self.user_name,
-            self.host_name,
-            self.script_block.replace('"', "\"\""),
-            self.command_line,
-            self.sequence_id,
-        )
+        vec![
+            (m.time.title, Cow::Borrowed(&self.time)),
+            (m.event_id.title, Cow::Owned(self.event_id.to_string())),
+            (m.description.title, Cow::Borrowed(self.description)),
+            (m.user_name.title, Cow::Borrowed(&self.user_name)),
+            (m.host_name.title, Cow::Borrowed(&self.host_name)),
+            (m.script_block.title, Cow::Borrowed(&self.script_block)),
+            (m.command_line.title, Cow::Borrowed(&self.command_line)),
+            (m.sequence_id.title, Cow::Borrowed(&self.sequence_id)),
+        ]
     }
 }

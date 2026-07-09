@@ -21,7 +21,7 @@ struct Args {
     models: Option<Models>,
 
     /// 输出模式
-    #[arg(short, long, value_enum, default_value_t = OutFormat::Csv)]
+    #[arg(short, long, value_enum, default_value_t = OutFormat::Excel)]
     out: OutFormat,
     /// 显示帮助信息
     #[arg(short, long, action = clap::ArgAction::Help)]

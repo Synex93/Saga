@@ -1,5 +1,6 @@
 use super::structs::{SCHEDULED_TASK_META, ScheduledTaskDetail};
 use crate::parser::definition::EventRecord;
+use std::borrow::Cow;
 
 impl EventRecord for ScheduledTaskDetail {
     fn time(&self) -> &str {
@@ -9,30 +10,19 @@ impl EventRecord for ScheduledTaskDetail {
     fn type_name(&self) -> &'static str {
         "ScheduledTask"
     }
-    fn csv_header(&self) -> String {
+    fn fields(&self) -> Vec<(&'static str, Cow<'_, str>)> {
         let m = &SCHEDULED_TASK_META;
-        format!(
-            "{},{},{},{},{},{},{}",
-            m.time.title,
-            m.event_id.title,
-            m.description.title,
-            m.task_name.title,
-            m.subject_user_name.title,
-            m.action.title,
-            m.result_code.title,
-        )
-    }
-
-    fn to_csv_row(&self) -> String {
-        format!(
-            "{},{},{},{},{},{},{}",
-            self.time,
-            self.event_id,
-            self.description,
-            self.task_name,
-            self.subject_user_name,
-            self.action,
-            self.result_code,
-        )
+        vec![
+            (m.time.title, Cow::Borrowed(&self.time)),
+            (m.event_id.title, Cow::Owned(self.event_id.to_string())),
+            (m.description.title, Cow::Borrowed(self.description)),
+            (m.task_name.title, Cow::Borrowed(&self.task_name)),
+            (
+                m.subject_user_name.title,
+                Cow::Borrowed(&self.subject_user_name),
+            ),
+            (m.action.title, Cow::Borrowed(&self.action)),
+            (m.result_code.title, Cow::Borrowed(&self.result_code)),
+        ]
     }
 }
