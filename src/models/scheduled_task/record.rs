@@ -1,6 +1,5 @@
 use super::structs::{SCHEDULED_TASK_META, ScheduledTaskDetail};
-use crate::parser::definition::EventRecord;
-use std::borrow::Cow;
+use crate::parser::definition::{CellValue, EventRecord};
 
 impl EventRecord for ScheduledTaskDetail {
     fn time(&self) -> &str {
@@ -10,20 +9,20 @@ impl EventRecord for ScheduledTaskDetail {
     fn type_name(&self) -> &'static str {
         "ScheduledTask"
     }
-    fn fields(&self) -> Vec<(&'static str, Cow<'_, str>)> {
+    fn fields(&self) -> Vec<(&'static str, CellValue<'_>)> {
         let m = &SCHEDULED_TASK_META;
         vec![
-            (m.time.title, Cow::Borrowed(&self.time)),
-            (m.event_id.title, Cow::Owned(self.event_id.to_string())),
-            (m.description.title, Cow::Borrowed(self.description)),
-            (m.task_name.title, Cow::Borrowed(&self.task_name)),
+            (m.time.title, CellValue::text(&self.time)),
+            (m.event_id.title, CellValue::num(self.event_id)),
+            (m.description.title, CellValue::text(self.description)),
+            (m.task_name.title, CellValue::text(&self.task_name)),
             (
                 m.subject_user_name.title,
-                Cow::Borrowed(&self.subject_user_name),
+                CellValue::text(&self.subject_user_name),
             ),
-            (m.action.title, Cow::Borrowed(&self.action)),
-            (m.result_code.title, Cow::Borrowed(&self.result_code)),
-            (m.raw_data.title, Cow::Borrowed(&self.raw_data)),
+            (m.action.title, CellValue::text(&self.action)),
+            (m.result_code.title, CellValue::text(&self.result_code)),
+            (m.raw_data.title, CellValue::text(&self.raw_data)),
         ]
     }
 }

@@ -1,6 +1,5 @@
 use super::structs::{SESSION_META, SessionDetail};
-use crate::parser::definition::EventRecord;
-use std::borrow::Cow;
+use crate::parser::definition::{CellValue, EventRecord};
 
 impl EventRecord for SessionDetail {
     fn time(&self) -> &str {
@@ -10,17 +9,17 @@ impl EventRecord for SessionDetail {
     fn type_name(&self) -> &'static str {
         "Session"
     }
-    fn fields(&self) -> Vec<(&'static str, Cow<'_, str>)> {
+    fn fields(&self) -> Vec<(&'static str, CellValue<'_>)> {
         let m = &SESSION_META;
         vec![
-            (m.time.title, Cow::Borrowed(&self.time)),
-            (m.event_id.title, Cow::Owned(self.event_id.to_string())),
-            (m.description.title, Cow::Borrowed(self.description)),
-            (m.user_name.title, Cow::Borrowed(&self.user_name)),
-            (m.session_id.title, Cow::Borrowed(&self.session_id)),
-            (m.remote_host.title, Cow::Borrowed(&self.remote_host)),
-            (m.reason.title, Cow::Borrowed(&self.reason)),
-            (m.raw_data.title, Cow::Borrowed(&self.raw_data)),
+            (m.time.title, CellValue::text(&self.time)),
+            (m.event_id.title, CellValue::num(self.event_id)),
+            (m.description.title, CellValue::text(self.description)),
+            (m.user_name.title, CellValue::text(&self.user_name)),
+            (m.session_id.title, CellValue::text(&self.session_id)),
+            (m.remote_host.title, CellValue::text(&self.remote_host)),
+            (m.reason.title, CellValue::text(&self.reason)),
+            (m.raw_data.title, CellValue::text(&self.raw_data)),
         ]
     }
 }

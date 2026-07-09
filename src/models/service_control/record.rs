@@ -1,6 +1,5 @@
 use super::structs::{SERVICE_CONTROL_META, ServiceControlDetail};
-use crate::parser::definition::EventRecord;
-use std::borrow::Cow;
+use crate::parser::definition::{CellValue, EventRecord};
 
 impl EventRecord for ServiceControlDetail {
     fn time(&self) -> &str {
@@ -10,18 +9,18 @@ impl EventRecord for ServiceControlDetail {
     fn type_name(&self) -> &'static str {
         "ServiceControl"
     }
-    fn fields(&self) -> Vec<(&'static str, Cow<'_, str>)> {
+    fn fields(&self) -> Vec<(&'static str, CellValue<'_>)> {
         let m = &SERVICE_CONTROL_META;
         vec![
-            (m.time.title, Cow::Borrowed(&self.time)),
-            (m.event_id.title, Cow::Owned(self.event_id.to_string())),
-            (m.description.title, Cow::Borrowed(self.description)),
-            (m.service_name.title, Cow::Borrowed(&self.service_name)),
-            (m.service_type.title, Cow::Borrowed(&self.service_type)),
-            (m.start_type.title, Cow::Borrowed(&self.start_type)),
-            (m.image_path.title, Cow::Borrowed(&self.image_path)),
-            (m.account_name.title, Cow::Borrowed(&self.account_name)),
-            (m.raw_data.title, Cow::Borrowed(&self.raw_data)),
+            (m.time.title, CellValue::text(&self.time)),
+            (m.event_id.title, CellValue::num(self.event_id)),
+            (m.description.title, CellValue::text(self.description)),
+            (m.service_name.title, CellValue::text(&self.service_name)),
+            (m.service_type.title, CellValue::text(&self.service_type)),
+            (m.start_type.title, CellValue::text(&self.start_type)),
+            (m.image_path.title, CellValue::text(&self.image_path)),
+            (m.account_name.title, CellValue::text(&self.account_name)),
+            (m.raw_data.title, CellValue::text(&self.raw_data)),
         ]
     }
 }

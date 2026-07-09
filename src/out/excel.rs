@@ -1,4 +1,4 @@
-use crate::parser::definition::EventRecord;
+use crate::parser::definition::{CellValue, EventRecord};
 use chrono::Local;
 use rust_xlsxwriter::Workbook;
 
@@ -19,9 +19,14 @@ pub fn to_excel(data: &[Box<dyn EventRecord + Send>]) {
 
     for (row_idx, rec) in data.iter().enumerate() {
         for (col, (_, val)) in rec.fields().iter().enumerate() {
-            worksheet
-                .write_string((row_idx as u32) + 1, col as u16, val.as_ref())
-                .expect("写入数据失败");
+            match val {
+                CellValue::Text(cow) => worksheet
+                    .write_string((row_idx as u32) + 1, col as u16, cow.as_ref())
+                    .expect("写入数据失败"),
+                CellValue::Number(n) => worksheet
+                    .write_number((row_idx as u32) + 1, col as u16, *n)
+                    .expect("写入数据失败"),
+            };
         }
     }
 

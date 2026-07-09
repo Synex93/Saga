@@ -1,6 +1,5 @@
 use super::structs::{ACCOUNT_MANAGEMENT_META, AccountManagementDetail};
-use crate::parser::definition::EventRecord;
-use std::borrow::Cow;
+use crate::parser::definition::{CellValue, EventRecord};
 
 impl EventRecord for AccountManagementDetail {
     fn time(&self) -> &str {
@@ -11,21 +10,21 @@ impl EventRecord for AccountManagementDetail {
         "AccountManagement"
     }
 
-    fn fields(&self) -> Vec<(&'static str, Cow<'_, str>)> {
+    fn fields(&self) -> Vec<(&'static str, CellValue<'_>)> {
         let m = &ACCOUNT_MANAGEMENT_META;
         vec![
-            (m.time.title, Cow::Borrowed(&self.time)),
-            (m.event_id.title, Cow::Owned(self.event_id.to_string())),
-            (m.description.title, Cow::Borrowed(self.description)),
+            (m.time.title, CellValue::text(&self.time)),
+            (m.event_id.title, CellValue::num(self.event_id)),
+            (m.description.title, CellValue::text(self.description)),
             (
                 m.subject_user_name.title,
-                Cow::Borrowed(&self.subject_user_name),
+                CellValue::text(&self.subject_user_name),
             ),
             (
                 m.target_user_name.title,
-                Cow::Borrowed(&self.target_user_name),
+                CellValue::text(&self.target_user_name),
             ),
-            (m.raw_data.title, Cow::Borrowed(&self.raw_data)),
+            (m.raw_data.title, CellValue::text(&self.raw_data)),
         ]
     }
 }
