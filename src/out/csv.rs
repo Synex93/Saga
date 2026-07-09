@@ -1,9 +1,9 @@
 // 数据导出CSV文件
-use crate::parser::models::definition::{ParserResult, ToCsv};
+use crate::parser::definition::EventRecord;
 use chrono::Local;
 use std::fs;
 
-pub fn to_csv(data: &[ParserResult]) {
+pub fn to_csv(data: &[Box<dyn EventRecord + Send>]) {
     if data.is_empty() {
         return;
     }

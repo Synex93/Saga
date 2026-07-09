@@ -2,7 +2,7 @@
 use super::csv::to_csv;
 use crate::cfg::sturct::OutFormat;
 pub fn run(
-    mut data: Vec<crate::parser::models::definition::ParserResult>,
+    mut data: Vec<Box<dyn crate::parser::definition::EventRecord + Send>>,
     total: usize,
     of: OutFormat,
 ) {
@@ -11,9 +11,6 @@ pub fn run(
     match of {
         OutFormat::Csv => {
             to_csv(&data);
-        }
-        _ => {
-            println!("暂未支持");
         }
     }
     println!("总计扫描到的事件记录数: {}", total);

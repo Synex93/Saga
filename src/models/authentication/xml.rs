@@ -1,81 +1,10 @@
-use super::definition::FieldMeta;
+use super::structs::AuthenticationDetail;
 use crate::cfg::event::EventId;
+use crate::parser::definition::EventRecord;
 use quick_xml::events::Event as XmlEvent;
 use quick_xml::reader::Reader;
 
-#[derive(Debug, Default)]
-pub struct AuthenticationDetail {
-    pub time: String,
-    pub event_id: u16,
-    pub description: &'static str,
-    pub subject_user_name: String,
-    pub target_user_name: String,
-    pub ip_address: String,
-    pub logon_type: Option<u32>,
-    pub status: String,
-}
-
-pub struct AuthenticationMeta {
-    pub time: FieldMeta,
-    pub event_id: FieldMeta,
-    pub description: FieldMeta,
-    pub subject_user_name: FieldMeta,
-    pub target_user_name: FieldMeta,
-    pub ip_address: FieldMeta,
-    pub logon_type: FieldMeta,
-    pub status: FieldMeta,
-}
-// 解析元数据
-pub static AUTH_META: AuthenticationMeta = AuthenticationMeta {
-    time: FieldMeta { title: "时间" },
-    event_id: FieldMeta { title: "事件ID" },
-    description: FieldMeta { title: "描述" },
-    subject_user_name: FieldMeta {
-        title: "主体用户"
-    },
-    target_user_name: FieldMeta {
-        title: "目标用户"
-    },
-    ip_address: FieldMeta { title: "来源IP" },
-    logon_type: FieldMeta {
-        title: "登录类型"
-    },
-    status: FieldMeta { title: "状态码" },
-};
-
-impl AuthenticationDetail {
-    pub fn csv_header() -> String {
-        let m = &AUTH_META;
-        format!(
-            "{},{},{},{},{},{},{},{}",
-            m.time.title,
-            m.event_id.title,
-            m.description.title,
-            m.subject_user_name.title,
-            m.target_user_name.title,
-            m.ip_address.title,
-            m.logon_type.title,
-            m.status.title
-        )
-    }
-
-    pub fn to_csv_row(&self) -> String {
-        format!(
-            "{},{},{},{},{},{},{},{}",
-            self.time,
-            self.event_id,
-            self.description,
-            self.subject_user_name,
-            self.target_user_name,
-            self.ip_address,
-            self.logon_type.map_or(String::new(), |v| v.to_string()),
-            self.status,
-        )
-    }
-}
-
-// ai generate
-pub fn parse_authentication(xml: &str) -> AuthenticationDetail {
+pub fn parse(xml: &str) -> Box<dyn EventRecord + Send> {
     let mut reader = Reader::from_str(xml);
     reader.config_mut().trim_text(true);
 
@@ -179,5 +108,5 @@ pub fn parse_authentication(xml: &str) -> AuthenticationDetail {
         buf.clear();
     }
 
-    detail
+    Box::new(detail)
 }

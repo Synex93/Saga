@@ -1,79 +1,10 @@
-use super::definition::FieldMeta;
+use super::structs::PowerShellDetail;
 use crate::cfg::event::EventId;
+use crate::parser::definition::EventRecord;
 use quick_xml::events::Event as XmlEvent;
 use quick_xml::reader::Reader;
 
-#[derive(Debug, Default)]
-pub struct PowerShellDetail {
-    pub time: String,
-    pub event_id: u16,
-    pub description: &'static str,
-    pub user_name: String,
-    pub host_name: String,
-    pub script_block: String,
-    pub command_line: String,
-    pub sequence_id: String,
-}
-
-pub struct PowerShellMeta {
-    pub time: FieldMeta,
-    pub event_id: FieldMeta,
-    pub description: FieldMeta,
-    pub user_name: FieldMeta,
-    pub host_name: FieldMeta,
-    pub script_block: FieldMeta,
-    pub command_line: FieldMeta,
-    pub sequence_id: FieldMeta,
-}
-
-pub static POWER_SHELL_META: PowerShellMeta = PowerShellMeta {
-    time: FieldMeta { title: "时间" },
-    event_id: FieldMeta { title: "事件ID" },
-    description: FieldMeta { title: "描述" },
-    user_name: FieldMeta { title: "用户" },
-    host_name: FieldMeta { title: "PS宿主" },
-    script_block: FieldMeta {
-        title: "脚本内容"
-    },
-    command_line: FieldMeta { title: "命令行" },
-    sequence_id: FieldMeta {
-        title: "分片序号"
-    },
-};
-
-impl PowerShellDetail {
-    pub fn csv_header() -> String {
-        let m = &POWER_SHELL_META;
-        format!(
-            "{},{},{},{},{},{},{},{}",
-            m.time.title,
-            m.event_id.title,
-            m.description.title,
-            m.user_name.title,
-            m.host_name.title,
-            m.script_block.title,
-            m.command_line.title,
-            m.sequence_id.title,
-        )
-    }
-
-    pub fn to_csv_row(&self) -> String {
-        // script_block 可能含换行和逗号，用双引号包裹
-        format!(
-            "{},{},{},{},{},\"{}\",{},{}",
-            self.time,
-            self.event_id,
-            self.description,
-            self.user_name,
-            self.host_name,
-            self.script_block.replace('"', "\"\""),
-            self.command_line,
-            self.sequence_id,
-        )
-    }
-}
-
-pub fn parse_powershell(xml: &str) -> PowerShellDetail {
+pub fn parse(xml: &str) -> Box<dyn EventRecord + Send> {
     let mut reader = Reader::from_str(xml);
     reader.config_mut().trim_text(true);
 
@@ -168,5 +99,5 @@ pub fn parse_powershell(xml: &str) -> PowerShellDetail {
         buf.clear();
     }
 
-    detail
+    Box::new(detail)
 }
