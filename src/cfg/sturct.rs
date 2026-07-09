@@ -4,6 +4,7 @@ pub struct Config {
     pub path: String,
     pub model: Models,
     pub format: OutFormat,
+    pub jobs: usize,
 }
 
 pub struct ModelRule {

@@ -23,6 +23,9 @@ struct Args {
     /// 输出模式
     #[arg(short, long, value_enum, default_value_t = OutFormat::Excel)]
     out: OutFormat,
+    /// 并发线程数，默认 4 (生产环境安全值)
+    #[arg(short = 'j', long, default_value_t = 4)]
+    jobs: usize,
     /// 显示帮助信息
     #[arg(short, long, action = clap::ArgAction::Help)]
     pub help: Option<bool>,
@@ -44,6 +47,7 @@ pub fn parser() -> Config {
             path: final_path,
             model: m,
             format: out_fromat,
+            jobs: args.jobs,
         },
         None => {
             eprintln!("模块参数为空，请使用-h查看帮助");
