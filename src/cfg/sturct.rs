@@ -1,7 +1,9 @@
 use clap::{Subcommand, ValueEnum};
+use std::path::PathBuf;
+
 #[derive(Debug, Clone)]
 pub struct Config {
-    pub path: String,
+    pub path: PathBuf,
     pub model: Models,
     pub format: OutFormat,
     pub jobs: usize,
@@ -15,7 +17,7 @@ pub struct ModelRule {
 #[derive(Subcommand, Debug, Clone)]
 #[command(rename_all = "verbatim")]
 pub enum Models {
-    /// 验证相关信息, EventID: 4624, 4625, 4648, 4672, 4740, 4768, 4771, 4776
+    /// 验证相关信息, EventID: 4624, 4625, 4648, 4672, 4740, 4768, 4771, 4776，4769
     Authentication,
     /// 会话生命周期, EventID: 4634, 4647, 21, 22, 23, 24, 25, 40, 1149
     Session,
@@ -27,6 +29,19 @@ pub enum Models {
     ScheduledTask,
     /// PowerShell 执行日志, EventID: 4103, 4104, 4105, 4106, 400, 403, 600
     PowerShell,
+}
+
+impl Models {
+    pub const fn command_name(&self) -> &'static str {
+        match self {
+            Self::Authentication => "Authentication",
+            Self::Session => "Session",
+            Self::AccountManagement => "AccountManagement",
+            Self::ServiceControl => "ServiceControl",
+            Self::ScheduledTask => "ScheduledTask",
+            Self::PowerShell => "PowerShell",
+        }
+    }
 }
 
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]

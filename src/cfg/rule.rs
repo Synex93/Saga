@@ -6,7 +6,7 @@ impl Models {
             // 验证相关
             Models::Authentication => ModelRule {
                 files: vec!["Security.evtx"],
-                ids: vec![4624, 4625, 4648, 4672, 4740, 4768, 4771, 4776],
+                ids: vec![4624, 4625, 4648, 4672, 4740, 4768, 4771, 4776, 4769],
             },
 
             // 会话生命周期

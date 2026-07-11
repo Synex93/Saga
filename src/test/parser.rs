@@ -6,11 +6,12 @@ mod tests {
     use std::time::Instant;
     use tokio::task;
 
-    /// cargo test bench_parse -- --nocapture
+    /// cargo test bench_parse -- --ignored --nocapture
     #[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+    #[ignore = "需要本机 Windows 系统日志及读取权限；手动执行 cargo test bench_parse -- --ignored --nocapture"]
     async fn bench_parse() {
         let log_path = r"C:\Windows\System32\winevt\Logs";
-        let files = list_evtx(log_path);
+        let files = list_evtx(std::path::Path::new(log_path)).expect("读取日志目录失败");
 
         println!("找到 evtx 文件数: {}", files.len());
 

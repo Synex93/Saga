@@ -4,18 +4,49 @@ use crate::parser::definition::EventRecord;
 use crate::parser::xml::XmlParser;
 use evtx::EvtxParser;
 use std::collections::{HashSet, VecDeque};
-use std::fs;
-use std::path::PathBuf;
+use std::fs::{self, File};
+use std::io;
+use std::path::{Path, PathBuf};
 use std::sync::{Arc, Mutex};
 use tokio::sync::mpsc;
 use tokio::task;
 
 const BATCH_SIZE: usize = 500;
 
-pub async fn run_parser(cfg: Config) {
+/// 查找当前模型需要的日志文件，并在开始解析前验证它们可读取。
+/// 该预检用于在普通权限不足时触发一次按需提权，而非无条件请求管理员权限。
+pub fn required_evtx_files(cfg: &Config) -> io::Result<Vec<PathBuf>> {
+    let path = &cfg.path;
+    let metadata = fs::metadata(path)?;
+    if !metadata.is_dir() {
+        return Err(io::Error::new(
+            io::ErrorKind::InvalidInput,
+            format!("日志路径不是目录：{}", path.display()),
+        ));
+    }
+
+    let all_files = list_evtx(path)?;
+    let files = filter_event_by_name(all_files, &cfg.model.get_model_rule().files);
+    if files.is_empty() {
+        return Err(io::Error::new(
+            io::ErrorKind::NotFound,
+            format!(
+                "在目录 {} 中未找到 {} 模块需要的 EVTX 日志文件",
+                path.display(),
+                cfg.model.command_name()
+            ),
+        ));
+    }
+
+    for file in &files {
+        File::open(file)?;
+    }
+
+    Ok(files)
+}
+
+pub async fn run_parser(cfg: Config, files: Vec<PathBuf>) -> usize {
     let rule = &cfg.model.get_model_rule();
-    let all_files = list_evtx(&cfg.path);
-    let files = filter_event_by_name(all_files, &rule.files);
 
     // 提高匹配效率
     let target_ids: Arc<HashSet<u16>> = Arc::new(rule.ids.clone().into_iter().collect());
@@ -110,29 +141,24 @@ pub async fn run_parser(cfg: Config) {
     }
 
     // 导出模块
-    crate::out::export::run(
-        collect_handle.await.unwrap_or_default(),
-        *total_num.lock().unwrap() as usize,
-        cfg.format,
-    );
+    let total = *total_num.lock().unwrap() as usize;
+    crate::out::export::run(collect_handle.await.unwrap_or_default(), cfg.format);
+    total
 }
 
-pub fn list_evtx(dir: &str) -> Vec<PathBuf> {
-    let ext = "evtx".to_string();
+pub fn list_evtx(dir: &Path) -> io::Result<Vec<PathBuf>> {
     let mut files = Vec::new();
 
-    if let Ok(entries) = fs::read_dir(dir) {
-        for entry in entries.flatten() {
-            let path = entry.path();
-
-            if path.is_file() {
-                if let Some(e) = path.extension() {
-                    if e.eq_ignore_ascii_case(&ext) {
-                        files.push(path);
-                    }
-                }
-            }
+    for entry in fs::read_dir(dir)? {
+        let path = entry?.path();
+        if path.is_file()
+            && path
+                .extension()
+                .is_some_and(|extension| extension.eq_ignore_ascii_case("evtx"))
+        {
+            files.push(path);
         }
     }
-    files
+
+    Ok(files)
 }

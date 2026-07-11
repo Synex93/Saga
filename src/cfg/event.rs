@@ -12,6 +12,7 @@ impl EventId {
             4768 => "Kerberos 身份验证票据 (TGT) 请求",
             4771 => "Kerberos 预认证失败 (暴力破解检测)",
             4776 => "NTLM 凭据验证尝试",
+            4769 => "Kerberos 服务票据 (TGS) 请求",
 
             // Session
             4634 => "账户会话已结束 (注销)",
